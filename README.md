@@ -22,3 +22,10 @@ Data set:    X#todo scRNA and TCR sequenced T cells during human thymus developm
 - Park, J.E., R.A. Botting, C. Dom ́ınguez Conde, D.M. Popescu, M. Lavaert, D.J. Kunz, I. Goh, E. Stephenson, R. Ragazzini, E. Tuck, et al. 2020. A cell atlas of human thymic development defines T cell repertoire formation. Science. 367.
 - An Y, Drost F, Theis F, Schubert B, Lotfollahi M. Jointly Learning T-cell Receptor and Transcriptomic Information to Decipher the Immune Response. bioRxiv (2021).
 
+## Setup:
+```
+conda create --name thymusTCRs python=3.8
+conda activate thymusTCRs
+conda install nb_conda_kernels
+pip install -r requirements.txt
+```

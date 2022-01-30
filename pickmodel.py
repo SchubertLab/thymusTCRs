@@ -5,7 +5,7 @@ sys.path.insert(0, './mvTCR')
 
 from tcr_embedding.models.model_selection import run_model_selection
 import tcr_embedding.utils_training as utils
-from tcr_embedding.utils_preprocessing import group_shuffle_split
+from tcr_embedding.utils_preprocessing import group_shuffle_split, stratified_group_shuffle_split
 
 import os
 import argparse
@@ -19,29 +19,35 @@ If you don't have them already, please install the following packages before run
 
 '''
 
-path_tcr_anno_with_gender = './data/07_tcr_annotation_with_gender_data.h5ad'
-adata = sc.read(path_tcr_anno_with_gender)
-randindices = np.random.choice(adata.shape[0], size = 100, replace = False)
-adata = adata[randindices] # Randomly pick only 100 observations from our data
 
 utils.fix_seeds(42)
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--model', type=str, default='poe')
+parser.add_argument('--model', type=str, default='moe') #Changes here: moe instead of poe
 parser.add_argument('--split', type=int, default=0)
 parser.add_argument('--gpus', type=int, default=1)
 args = parser.parse_args()
 
 # Put the .h5ad file read below in a folder named 'data' and put the folder 'data' in the 'mvTCR' folder.
 # This way you won't get an error from the utils.load_data function
-adata = utils.load_data('07_tcr_annotation_with_gender_data.h5ad')
-
+adata = utils.load_data('09_tcr_annotation_A_B_with_gender_data.h5ad')
+randindices = np.random.choice(adata.shape[0], size = 100, replace = False)
+adata = adata[randindices] # Randomly pick only 100 observations from our data
 
 random_seed = args.split
-train, val = group_shuffle_split(adata, group_col='clonotype', val_split=0.20, random_seed=random_seed)
+
+#sub, non_sub = group_shuffle_split(adata, group_col='clonotype', val_split=0.2, random_seed=random_seed)
+#train, val = group_shuffle_split(adata, group_col='clonotype', val_split=0.20, random_seed=random_seed)
+
+# Create Train-Val and Test set
+train_val, test = stratified_group_shuffle_split(adata.obs, stratify_col='cell types', group_col='clonotype', val_split=0.20, random_seed=random_seed)
+# Split Train-Val into Train and Val set
+train, val = stratified_group_shuffle_split(train_val, stratify_col='cell types', group_col='clonotype', val_split=0.25, random_seed=random_seed)
 adata.obs['set'] = 'train'
-adata.obs.loc[val.obs.index, 'set'] = 'val'
+#adata.obs.loc[non_sub.obs.index, 'set'] = '-'
+#adata.obs.loc[val.obs.index, 'set'] = 'val'
 adata = adata[adata.obs['set'].isin(['train', 'val'])]
+adata.obs['set'] = adata.obs['set'].astype('category')
 
 params_experiment = {
     'study_name': f'TCR_moe_split_{args.split}',
@@ -53,6 +59,9 @@ params_experiment = {
                               f'TCR_moe_split_{args.split}')
     # In the current directory, create a folder called 'optuna' so that this works
 }
+
+if args.model == 'rna':
+    params_experiment['balanced_sampling'] = None
 
 params_optimization = {
     'name': 'pseudo_metric',

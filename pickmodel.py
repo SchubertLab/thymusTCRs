@@ -36,17 +36,17 @@ adata = adata[randindices] # Randomly pick only 100 observations from our data
 
 random_seed = args.split
 
-#sub, non_sub = group_shuffle_split(adata, group_col='clonotype', val_split=0.2, random_seed=random_seed)
-#train, val = group_shuffle_split(adata, group_col='clonotype', val_split=0.20, random_seed=random_seed)
+# sub, non_sub = group_shuffle_split(adata, group_col='clonotype', val_split=0.2, random_seed=random_seed)
+# train, val = group_shuffle_split(adata, group_col='clonotype', val_split=0.20, random_seed=random_seed)
 
 # Create Train-Val and Test set
-train_val, test = stratified_group_shuffle_split(adata.obs, stratify_col='cell types', group_col='clonotype', val_split=0.20, random_seed=random_seed)
+train, val = stratified_group_shuffle_split(adata.obs, stratify_col='cell types', group_col='clonotype', val_split=0.20, random_seed=random_seed)
 # Split Train-Val into Train and Val set
-train, val = stratified_group_shuffle_split(train_val, stratify_col='cell types', group_col='clonotype', val_split=0.25, random_seed=random_seed)
+#train, val = stratified_group_shuffle_split(train_val, stratify_col='cell types', group_col='clonotype', val_split=0.25, random_seed=random_seed)
 adata.obs['set'] = 'train'
 #adata.obs.loc[non_sub.obs.index, 'set'] = '-'
-#adata.obs.loc[val.obs.index, 'set'] = 'val'
-adata = adata[adata.obs['set'].isin(['train', 'val'])]
+adata.obs.loc[val.index, 'set'] = 'val'
+#adata = adata[adata.obs['set'].isin(['train', 'val'])]
 adata.obs['set'] = adata.obs['set'].astype('category')
 
 params_experiment = {

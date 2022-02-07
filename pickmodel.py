@@ -1,7 +1,7 @@
 import scanpy as sc
 import numpy as np
 import sys
-sys.path.insert(0, './mvTCR')
+sys.path.insert(0, '../mvTCR')
 
 from tcr_embedding.models.model_selection import run_model_selection
 import tcr_embedding.utils_training as utils

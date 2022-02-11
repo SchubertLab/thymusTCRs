@@ -31,8 +31,6 @@ args = parser.parse_args()
 # Put the .h5ad file read below in a folder named 'data' and put the folder 'data' in the 'mvTCR' folder.
 # This way you won't get an error from the utils.load_data function
 adata = utils.load_data('09_tcr_annotation_A_B_with_gender_data.h5ad')
-randindices = np.random.choice(adata.shape[0], size = 100, replace = False)
-adata = adata[randindices] # Randomly pick only 100 observations from our data
 
 random_seed = args.split
 

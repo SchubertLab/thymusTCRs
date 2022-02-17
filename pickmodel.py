@@ -19,10 +19,11 @@ If you don't have them already, please install the following packages before run
 
 '''
 
-
-utils.fix_seeds(42)
+random_seed = 42
+utils.fix_seeds(random_seed)
 
 parser = argparse.ArgumentParser()
+parser.add_argument('--rna_weight', type=int, default=10)
 parser.add_argument('--model', type=str, default='moe') #Changes here: moe instead of poe
 parser.add_argument('--split', type=int, default=0)
 parser.add_argument('--gpus', type=int, default=1)
@@ -48,13 +49,13 @@ adata.obs.loc[val.index, 'set'] = 'val'
 adata.obs['set'] = adata.obs['set'].astype('category')
 
 params_experiment = {
-    'study_name': f'TCR_moe_split_{args.split}',
+    'study_name': f'TCR_moe_split_{args.split}_{args.rna_weight}',
     'comet_workspace': None, 
     'model_name': 'moe',
     'balanced_sampling': 'clonotype',
     'metadata': ['clonotype', 'cell types', 'Gender'],
     'save_path': os.path.join(os.path.dirname(__file__), 'optuna', 
-                              f'TCR_moe_split_{args.split}')
+                              f'TCR_moe_split_{args.split}_{args.rna_weight}')
     # In the current directory, create a folder called 'optuna' so that this works
 }
 
@@ -63,7 +64,9 @@ if args.model == 'rna':
 
 params_optimization = {
     'name': 'pseudo_metric',
-    'prediction_labels': ['clonotype', 'cell types'],
+    'prediction_labels': 
+    {'clonotype': 1, 
+    'cell types': args.rna_weight}
 }
 
 

@@ -23,7 +23,7 @@ random_seed = 42
 utils.fix_seeds(random_seed)
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--rna_weight', type=int, default=10)
+parser.add_argument('--rna_weight', type=int, default=5)
 parser.add_argument('--model', type=str, default='moe') #Changes here: moe instead of poe
 parser.add_argument('--split', type=int, default=0)
 parser.add_argument('--gpus', type=int, default=1)

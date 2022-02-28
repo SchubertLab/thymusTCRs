@@ -23,8 +23,8 @@ random_seed = 42
 utils.fix_seeds(random_seed)
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--rna_weight', type=int, default=5)
-parser.add_argument('--model', type=str, default='moe') #Changes here: moe instead of poe
+parser.add_argument('--rna_weight', type=int, default=1)
+parser.add_argument('--model', type=str, default='rna') #Changes here: moe/poe/rna
 parser.add_argument('--split', type=int, default=0)
 parser.add_argument('--gpus', type=int, default=1)
 args = parser.parse_args()
@@ -49,13 +49,13 @@ adata.obs.loc[val.index, 'set'] = 'val'
 adata.obs['set'] = adata.obs['set'].astype('category')
 
 params_experiment = {
-    'study_name': f'TCR_moe_split_{args.split}_{args.rna_weight}',
+    'study_name': f'TCR_rna_split_{args.split}_{args.rna_weight}',
     'comet_workspace': None, 
-    'model_name': 'moe',
+    'model_name': 'rna', #Changed moe to rna
     'balanced_sampling': 'clonotype',
     'metadata': ['clonotype', 'cell types', 'Gender'],
     'save_path': os.path.join(os.path.dirname(__file__), 'optuna', 
-                              f'TCR_moe_split_{args.split}_{args.rna_weight}')
+                              f'TCR_rna_split_{args.split}_{args.rna_weight}')
     # In the current directory, create a folder called 'optuna' so that this works
 }
 
